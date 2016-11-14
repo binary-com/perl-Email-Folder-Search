@@ -13,6 +13,7 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 =head1 SYNOPSIS
 
     use Email::Folder::Search qw(get_email_by_address_subject clear_mailbox);
+    $Email::Folder::Search::mailbox = '/var/spool/mbox';
     my %msg = get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
     clear_mailbox();
 
@@ -32,6 +33,18 @@ use base qw(Exporter);
 our @EXPORT_OK = qw(get_email_by_address_subject clear_mailbox);
 
 our $VERSION = '0.01';
+
+=head2 $mailbox
+
+The path of mailbox file.
+
+=cut
+
+=head2 $timeout
+
+The seconds that get_email_by_address_subject will wait if the email cannot be found.
+
+=cut
 
 # mailbox is set in the chef postfix part and travis-script/setup-postfix
 our $mailbox = $ENV{MAILBOX_PATH} || "/tmp/default.mailbox";
