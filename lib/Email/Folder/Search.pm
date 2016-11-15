@@ -13,9 +13,9 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 =head1 SYNOPSIS
 
     use Email::Folder::Search qw(get_email_by_address_subject clear_mailbox);
-    $Email::Folder::Search::mailbox = '/var/spool/mbox';
-    my %msg = get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
-    clear_mailbox();
+    my $folder = Email::Folder::Search->new('/var/spool/mbox');
+    my %msg = $folder->get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
+    $folder->clear_mailbox();
 
 =cut
 
@@ -25,13 +25,11 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 
 use strict;
 use warnings;
+use NEXT;
 use Email::Folder;
 use Encode qw(decode);
-use Email::FolderType 0.6 qw/folder_type/;
-
-use base qw(Exporter);
-
-our @EXPORT_OK = qw(get_email_by_address_subject clear_mailbox);
+use Scalar::Util qw(blessed);
+use base 'Email::Folder';
 
 our $VERSION = '0.01';
 
@@ -47,8 +45,15 @@ The seconds that get_email_by_address_subject will wait if the email cannot be f
 
 =cut
 
-our $mailbox = $ENV{MAILBOX_PATH} || "/tmp/default.mailbox";
-our $timeout = 3;
+sub new {
+    my $class   = shift;
+    my $folder_path  = shift // '/tmp/default.mailbox';
+    my %options = @_;
+    my $self    = $class->NEXT::new($folder_path, %options);
+    $self->{folder_path} = $folder_path;
+    $self->{timeout} //= 3;
+    return $self;
+}
 
 =head2 get_email_by_address_subject
 
@@ -67,6 +72,7 @@ get email by address and subject(regexp)
 =cut
 
 sub get_email_by_address_subject {
+    my $self = shift;
     my %cond = @_;
 
     die 'Need email address and subject regexp' unless $cond{email} && $cond{subject} && ref($cond{subject}) eq 'Regexp';
@@ -76,10 +82,8 @@ sub get_email_by_address_subject {
 
     my %msg;
     #mailbox maybe late, so we wait 3 seconds
-    WAIT: for (0 .. $timeout) {
-        my $folder = Email::Folder->new($mailbox);
-
-        MSG: while (my $tmsg = $folder->next_message) {
+    WAIT: for (0 .. $self->{timeout}) {
+        MSG: while (my $tmsg = $self->next_message) {
             my $address = $tmsg->header('To');
             #my $address = $to[0]->address();
             my $subject = $tmsg->header('Subject');
@@ -93,34 +97,43 @@ sub get_email_by_address_subject {
                 $msg{subject} = $subject;
                 last WAIT;
             }
+            # reset reader
+            $self->reset;
         }
         sleep 1;
     }
     return %msg;
 }
 
-sub import {
-    my @exported = @_;
-    #to be sure there is the mailbox file so that I needn't check it again in the loop
-    open(my $fh, '>>', $mailbox) || die "cannot create mailbox";
-    close($fh);
-    __PACKAGE__->export_to_level(1, @exported);
-    return;
+sub reset{
+  my $self = shift;
+  my $reader_class = blessed($self->{_folder});
+  delete $self->{_folder};
+  $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
 }
+
+#sub import {
+#    my @exported = @_;
+#    #to be sure there is the mailbox file so that I needn't check it again in the loop
+#    open(my $fh, '>>', $mailbox) || die "cannot create mailbox";
+#    close($fh);
+#    __PACKAGE__->export_to_level(1, @exported);
+#    return;
+#}
 
 =head2 clear_mailbox
 
 =cut
 
 sub clear_mailbox {
-  my $type = folder_type($mailbox) // '';
+    my $self = shift;
+    my $type = blessed($self->{_folder}) // '';
 
-  if($type eq 'Mbox' ){
-    truncate $mailbox, 0 || die "Cannot clear mailbox $mailbox\n";
-  }
-  else{
-    die "Sorry, I can only clear the $type mailbox\n";
-  }
+    if ($type eq 'Email::Folder::Mbox') {
+        truncate $self->{folder_path}, 0 || die "Cannot clear mailbox $self->{folder_path}\n";
+    } else {
+        die "Sorry, I can only clear the mailbox with the type Mbox\n";
+    }
 
     return;
 }
