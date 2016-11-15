@@ -12,14 +12,14 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 
 =head1 SYNOPSIS
 
-    use Email::Folder::Search qw(get_email_by_address_subject clear_mailbox);
+    use Email::Folder::Search;
     my $folder = Email::Folder::Search->new('/var/spool/mbox');
     my %msg = $folder->get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
-    $folder->clear_mailbox();
+    $folder->clear();
 
 =cut
 
-=head1 Functions
+=head1 Methods
 
 =cut
 
@@ -33,15 +33,19 @@ use base 'Email::Folder';
 
 our $VERSION = '0.01';
 
-=head2 $mailbox
+=head2 new($folder, %options)
 
-The path of mailbox file.
+takes the name of a folder, and a hash of options
 
-=cut
+options:
 
-=head2 $timeout
+=over
+
+=item timeout
 
 The seconds that get_email_by_address_subject will wait if the email cannot be found.
+
+=back
 
 =cut
 
@@ -55,19 +59,11 @@ sub new {
     return $self;
 }
 
-=head2 get_email_by_address_subject
+=head2 get_email_by_address_subject(email => $email, subject => qr/the subject/);
 
-get email by address and subject(regexp)
+get the first email with receiver address and subject(regexp)
 
     my %msg = get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
-
-=over
-
-=item email: a string, the receiver's email address
-
-=item subject: a regexp, the subject of the email
-
-=back
 
 =cut
 
@@ -112,11 +108,13 @@ sub reset{
   $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
 }
 
-=head2 clear_mailbox
+=head2 clear
+
+clear the content of mailbox
 
 =cut
 
-sub clear_mailbox {
+sub clear {
     my $self = shift;
     my $type = blessed($self->{_folder}) // '';
 
@@ -131,5 +129,10 @@ sub clear_mailbox {
     return;
 }
 
+=head1 SEE ALSO
+
+L<Email::Folder>
+
+=cut
 1;
 

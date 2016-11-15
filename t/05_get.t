@@ -34,7 +34,7 @@ ok { !%msg, "get a blank message" };
 
 lives_ok { %msg = $mailbox->get_email_by_address_subject(email => $address, subject => qr/$subject/) } 'get email';
 like($msg{body}, qr/$body/, 'get correct email');
-$mailbox->clear_mailbox();
+$mailbox->clear();
 ok(-z $folder_path, "mailbox truncated");
 
 {
