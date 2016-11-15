@@ -90,7 +90,6 @@ sub search {
             }
 
             if ($address eq $email && $subject =~ $subject_regexp) {
-                $DB::single = 1;
                 my %msg;
                 $msg{body}    = $tmsg->body;
                 $msg{address} = $address;

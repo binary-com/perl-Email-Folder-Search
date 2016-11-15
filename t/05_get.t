@@ -38,9 +38,10 @@ ok(-z $folder_path, "mailbox truncated");
 
 {
     $mailbox->{timeout} = 3;
-    local $SIG{ALRM} = sub { send_email() };
+    local $SIG{ALRM} = sub { send_email(); send_email(); };
     alarm(2);
-    lives_ok { $mailbox->search(email => 'nosuch@email.com', subject => qr/hello/) } 'will wait "timeout" secouds for new email';
+    lives_ok { @msgs = $mailbox->search(email => $address, subject => qr/$subject/) } 'will wait "timeout" secouds for new email';
+    is(scalar(@msgs), 2, "got 2 mails");
 }
 
 done_testing;
@@ -62,7 +63,13 @@ sub send_email {
             })->SendEnc($body)->Close();
     }
     catch {
-        copy "$Bin/test.mailbox", $folder_path;
+        open(my $fh1, ">>", $folder_path)        || die "Cannot open file $folder_path";
+        open(my $fh2, "<",  "$Bin/test.mailbox") || die "Cannot open file $Bin/test.mailbox";
+        while (<$fh2>) {
+            print $fh1 $_;
+        }
+        close($fh1);
+        close($fh2);
     };
 
 }
