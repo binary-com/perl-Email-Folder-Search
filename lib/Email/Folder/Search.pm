@@ -26,7 +26,6 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 use strict;
 use warnings;
 use NEXT;
-use Email::Folder;
 use Encode qw(decode);
 use Scalar::Util qw(blessed);
 use base 'Email::Folder';

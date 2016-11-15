@@ -1,11 +1,12 @@
 requires 'Email::Folder';
 requires 'Encode';
-requires 'Exporter';
+requries 'NEXT';
+requires 'Scalar::Util';
 
-#on configure => sub {
-#    requires 'ExtUtils::MakeMaker', '6.48';
-#};
-#
+on configure => sub {
+    requires 'ExtUtils::MakeMaker', '6.48';
+};
+
 on build => sub {
     requires 'perl', '5.010000';
 };
