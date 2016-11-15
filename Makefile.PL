@@ -7,29 +7,33 @@ use 5.010000;
 use ExtUtils::MakeMaker 6.48;
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "wait and fetch email from mailbox file",
+  "ABSTRACT" => "wait and search emails from mailbox",
   "AUTHOR" => "binary.com <cpan\@binary.com>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.48"
   },
-  "DISTNAME" => "Email-Fetch",
+  "DISTNAME" => "Email-Folder-Search",
   "LICENSE" => "perl",
   "MIN_PERL_VERSION" => "5.010000",
-  "NAME" => "Email::Fetch",
+  "NAME" => "Email::Folder::Search",
   "PREREQ_PM" => {
     "Email::Folder" => 0,
     "Encode" => 0,
-    "Exporter" => 0
+    "NEXT" => 0,
+    "Scalar::Util" => 0
   },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
+    "File::Copy" => 0,
     "File::Spec" => 0,
+    "FindBin" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
     "Mail::Sender" => 0,
     "Test::CheckDeps" => "0.010",
     "Test::Exception" => 0,
-    "Test::More" => "0.94"
+    "Test::More" => "0.94",
+    "Try::Tiny" => 0
   },
   "VERSION" => "0.01",
   "test" => {
@@ -41,15 +45,19 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "Email::Folder" => 0,
   "Encode" => 0,
-  "Exporter" => 0,
   "ExtUtils::MakeMaker" => 0,
+  "File::Copy" => 0,
   "File::Spec" => 0,
+  "FindBin" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
   "Mail::Sender" => 0,
+  "NEXT" => 0,
+  "Scalar::Util" => 0,
   "Test::CheckDeps" => "0.010",
   "Test::Exception" => 0,
-  "Test::More" => "0.94"
+  "Test::More" => "0.94",
+  "Try::Tiny" => 0
 );
 
 

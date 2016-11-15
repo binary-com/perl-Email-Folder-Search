@@ -1,6 +1,6 @@
 package Email::Folder::Search;
 
-# ABSTRACT: wait and fetch search from mailbox file
+# ABSTRACT: wait and search emails from mailbox
 
 =head1 NAME
 
