@@ -22,8 +22,10 @@ BEGIN {
 }
 
 my $folder_path = '/tmp/default.mailbox';
+
 my $mailbox = Email::Folder::Search->new($folder_path, timeout => 0);
-#ok(-e $mailbox->{folder_path}, "mailbox created");
+ok(open(my $fh, ">", $folder_path), "mailbox created");
+close($fh);
 my $address = 'test@test.com';
 my $subject = "test mail sender";
 my $body    = "hello, this is just for test";
