@@ -27,6 +27,7 @@ use strict;
 use warnings;
 use Email::Folder;
 use Encode qw(decode);
+use Email::FolderType 0.6 qw/folder_type/;
 
 use base qw(Exporter);
 
@@ -46,13 +47,22 @@ The seconds that get_email_by_address_subject will wait if the email cannot be f
 
 =cut
 
-# mailbox is set in the chef postfix part and travis-script/setup-postfix
 our $mailbox = $ENV{MAILBOX_PATH} || "/tmp/default.mailbox";
 our $timeout = 3;
 
 =head2 get_email_by_address_subject
 
 get email by address and subject(regexp)
+
+    my %msg = get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
+
+=over
+
+=item email: a string, the receiver's email address
+
+=item subject: a regexp, the subject of the email
+
+=back
 
 =cut
 
@@ -103,7 +113,15 @@ sub import {
 =cut
 
 sub clear_mailbox {
-    truncate $mailbox, 0;
+  my $type = folder_type($mailbox) // '';
+
+  if($type eq 'Mbox' ){
+    truncate $mailbox, 0 || die "Cannot clear mailbox $mailbox\n";
+  }
+  else{
+    die "Sorry, I can only clear the $type mailbox\n";
+  }
+
     return;
 }
 
