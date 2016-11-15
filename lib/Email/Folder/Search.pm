@@ -50,24 +50,24 @@ The seconds that get_email_by_address_subject will wait if the email cannot be f
 =cut
 
 sub new {
-    my $class   = shift;
-    my $folder_path  = shift // '/tmp/default.mailbox';
-    my %options = @_;
-    my $self    = $class->NEXT::new($folder_path, %options);
+    my $class       = shift;
+    my $folder_path = shift // '/tmp/default.mailbox';
+    my %options     = @_;
+    my $self        = $class->NEXT::new($folder_path, %options);
     $self->{folder_path} = $folder_path;
     $self->{timeout} //= 3;
     return $self;
 }
 
-=head2 get_email_by_address_subject(email => $email, subject => qr/the subject/);
+=head2 search(email => $email, subject => qr/the subject/);
 
-get the first email with receiver address and subject(regexp)
+get emails with receiver address and subject(regexp). Return an array of messages which are hashref.
 
-    my %msg = get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
+    my $msgs = search(email => 'hello@test.com', subject => qr/this is a subject/);
 
 =cut
 
-sub get_email_by_address_subject {
+sub search {
     my $self = shift;
     my %cond = @_;
 
@@ -76,7 +76,9 @@ sub get_email_by_address_subject {
     my $email          = $cond{email};
     my $subject_regexp = $cond{subject};
 
-    my %msg;
+    my @msgs;
+
+    my $found = 0;
     #mailbox maybe late, so we wait 3 seconds
     WAIT: for (0 .. $self->{timeout}) {
         MSG: while (my $tmsg = $self->next_message) {
@@ -88,24 +90,28 @@ sub get_email_by_address_subject {
             }
 
             if ($address eq $email && $subject =~ $subject_regexp) {
+                $DB::single = 1;
+                my %msg;
                 $msg{body}    = $tmsg->body;
                 $msg{address} = $address;
                 $msg{subject} = $subject;
-                last WAIT;
+                push @msgs, \%msg;
+                $found = 1;
             }
         }
-          # reset reader
-          $self->reset;
-          sleep 1;
+        last WAIT if $found;
+        # reset reader
+        $self->reset;
+        sleep 1;
     }
-    return %msg;
+    return @msgs;
 }
 
-sub reset{
-  my $self = shift;
-  my $reader_class = blessed($self->{_folder});
-  delete $self->{_folder};
-  $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
+sub reset {
+    my $self         = shift;
+    my $reader_class = blessed($self->{_folder});
+    delete $self->{_folder};
+    $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
 }
 
 =head2 clear
@@ -134,5 +140,6 @@ sub clear {
 L<Email::Folder>
 
 =cut
+
 1;
 
