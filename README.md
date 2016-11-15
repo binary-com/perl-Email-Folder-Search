@@ -11,23 +11,33 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 
 # SYNOPSIS
 
-    use Email::Folder::Search qw(get_email_by_address_subject clear_mailbox);
-    $Email::Folder::Search::mailbox = '/var/spool/mbox';
-    my %msg = get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
-    clear_mailbox();
+    use Email::Folder::Search;
+    my $folder = Email::Folder::Search->new('/var/spool/mbox');
+    my %msg = $folder->get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
+    $folder->clear();
 
-# Functions
+# Methods
 
-## $mailbox
+## new($folder, %options)
 
-The path of mailbox file.
+takes the name of a folder, and a hash of options
 
-## $timeout
+options:
 
-The seconds that get\_email\_by\_address\_subject will wait if the email cannot be found.
+- timeout
 
-## get\_email\_by\_address\_subject
+    The seconds that get\_email\_by\_address\_subject will wait if the email cannot be found.
 
-get email by address and subject(regexp)
+## search(email => $email, subject => qr/the subject/);
 
-## clear\_mailbox
+get emails with receiver address and subject(regexp). Return an array of messages which are hashref.
+
+    my $msgs = search(email => 'hello@test.com', subject => qr/this is a subject/);
+
+## clear
+
+clear the content of mailbox
+
+# SEE ALSO
+
+[Email::Folder](https://metacpan.org/pod/Email::Folder)
