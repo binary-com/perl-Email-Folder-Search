@@ -112,15 +112,6 @@ sub reset{
   $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
 }
 
-#sub import {
-#    my @exported = @_;
-#    #to be sure there is the mailbox file so that I needn't check it again in the loop
-#    open(my $fh, '>>', $mailbox) || die "cannot create mailbox";
-#    close($fh);
-#    __PACKAGE__->export_to_level(1, @exported);
-#    return;
-#}
-
 =head2 clear_mailbox
 
 =cut
