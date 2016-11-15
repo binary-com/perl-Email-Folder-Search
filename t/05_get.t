@@ -28,7 +28,7 @@ my $address = 'test@test.com';
 my $subject = "test mail sender";
 my $body    = "hello, this is just for test";
 
-#send_email();
+send_email();
 #test arguments
 throws_ok { $mailbox->get_email_by_address_subject() } qr/Need email address and subject regexp/, 'test arguments';
 throws_ok { $mailbox->get_email_by_address_subject(email => $address) } qr/Need email address and subject regexp/, 'test arguments';
@@ -40,15 +40,15 @@ ok { !%msg, "get a blank message" };
 
 lives_ok { %msg = $mailbox->get_email_by_address_subject(email => $address, subject => qr/$subject/) } 'get email';
 like($msg{body}, qr/$body/, 'get correct email');
-#$mailbox->clear_mailbox();
-#ok(-z $folder_path, "mailbox truncated");
-#
-#{
-#    $mailbox->{timeout} = 3;
-#    local $SIG{ALRM} = sub { send_email() };
-#    alarm(2);
-#    lives_ok { $mailbox->get_email_by_address_subject(email => 'nosuch@email.com', subject => qr/hello/) } 'will wait "timeout" secouds for new email';
-#1}
+$mailbox->clear_mailbox();
+ok(-z $folder_path, "mailbox truncated");
+
+{
+    $mailbox->{timeout} = 3;
+    local $SIG{ALRM} = sub { send_email() };
+    alarm(2);
+    lives_ok { $mailbox->get_email_by_address_subject(email => 'nosuch@email.com', subject => qr/hello/) } 'will wait "timeout" secouds for new email';
+}
 
 done_testing;
 

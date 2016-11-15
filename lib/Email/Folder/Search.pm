@@ -97,10 +97,10 @@ sub get_email_by_address_subject {
                 $msg{subject} = $subject;
                 last WAIT;
             }
-            # reset reader
-            $self->reset;
         }
-        sleep 1;
+          # reset reader
+          $self->reset;
+          sleep 1;
     }
     return %msg;
 }
@@ -129,8 +129,10 @@ sub clear_mailbox {
     my $self = shift;
     my $type = blessed($self->{_folder}) // '';
 
+    $self->reset;
+
     if ($type eq 'Email::Folder::Mbox') {
-        truncate $self->{folder_path}, 0 || die "Cannot clear mailbox $self->{folder_path}\n";
+        truncate $self->{folder_path}, 0 // die "Cannot clear mailbox $self->{folder_path}\n";
     } else {
         die "Sorry, I can only clear the mailbox with the type Mbox\n";
     }
