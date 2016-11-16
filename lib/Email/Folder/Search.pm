@@ -130,7 +130,27 @@ sub clear {
         die "Sorry, I can only clear the mailbox with the type Mbox\n";
     }
 
-    return;
+    return 1;
+}
+
+=head2 init
+
+init Email folder for test
+
+=cut
+
+sub init {
+    my $self = shift;
+
+    my $type = blessed($self->{_folder}) // '';
+
+    if ($type eq 'Email::Folder::Mbox') {
+        open(my $fh, ">>", $self->{folder_path}) // die "Cannot init mailbox $self->{folder_path}\n";
+        close($fh);
+    } else {
+        die "Sorry, I can only init the mailbox with the type Mbox\n";
+    }
+    return 1;
 }
 
 =head1 SEE ALSO
