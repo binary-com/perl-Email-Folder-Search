@@ -38,6 +38,10 @@ get emails with receiver address and subject(regexp). Return an array of message
 
 clear the content of mailbox
 
+## init
+
+init Email folder for test
+
 # SEE ALSO
 
 [Email::Folder](https://metacpan.org/pod/Email::Folder)
