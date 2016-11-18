@@ -6,7 +6,7 @@ use Test::Exception;
 use Mail::Sender;
 use Try::Tiny;
 use FindBin qw($Bin);
-use File::Copy qw(copy);
+use Path::Tiny;
 
 BEGIN {
     use_ok('Email::Folder::Search');
@@ -46,29 +46,5 @@ ok(-z $folder_path, "mailbox truncated");
 done_testing;
 
 sub send_email {
-    #send email
-    try {
-        Mail::Sender->new({
-                smtp      => 'localhost',
-                from      => "travis",
-                to        => $address,
-                ctype     => 'text/html',
-                charset   => 'UTF-8',
-                encoding  => "quoted-printable",
-                on_errors => 'die',
-            }
-            )->Open({
-                subject => $subject,
-            })->SendEnc($body)->Close();
-    }
-    catch {
-        open(my $fh1, ">>", $folder_path)        || die "Cannot open file $folder_path";
-        open(my $fh2, "<",  "$Bin/test.mailbox") || die "Cannot open file $Bin/test.mailbox";
-        while (<$fh2>) {
-            print $fh1 $_;
-        }
-        close($fh1);
-        close($fh2);
-    };
-
+    path($folder_path)->append_utf8(path("$Bin/test.mailbox")->lines_utf8);
 }
