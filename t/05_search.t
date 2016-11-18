@@ -3,7 +3,6 @@ use warnings;
 
 use Test::More;
 use Test::Exception;
-use Mail::Sender;
 use Try::Tiny;
 use FindBin qw($Bin);
 use Path::Tiny;
