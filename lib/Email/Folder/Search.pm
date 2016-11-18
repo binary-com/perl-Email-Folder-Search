@@ -25,10 +25,10 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 
 use strict;
 use warnings;
-use NEXT;
 use Encode qw(decode);
 use Scalar::Util qw(blessed);
 use base 'Email::Folder';
+use Class::C3;
 
 our $VERSION = '0.01';
 
@@ -50,10 +50,9 @@ The seconds that get_email_by_address_subject will wait if the email cannot be f
 
 sub new {
     my $class       = shift;
-    my $folder_path = shift // '/tmp/default.mailbox';
-    my %options     = @_;
-    my $self        = $class->NEXT::new($folder_path, %options);
-    $self->{folder_path} = $folder_path;
+    my @args = @_;
+    my $self        = $class->next::method(@args);
+    $self->{folder_path} = $args[0];
     $self->{timeout} //= 3;
     return $self;
 }
