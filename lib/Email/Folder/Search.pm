@@ -123,7 +123,7 @@ sub clear {
     $self->reset;
 
     if ($type eq 'Email::Folder::Mbox') {
-        truncate $self->{folder_path}, 0 // die "Cannot clear mailbox $self->{folder_path}\n";
+        truncate($self->{folder_path}, 0) // die "Cannot clear mailbox $self->{folder_path}\n";
     } else {
         die "Sorry, I can only clear the mailbox with the type Mbox\n";
     }
