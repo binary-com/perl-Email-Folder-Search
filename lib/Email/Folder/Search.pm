@@ -28,9 +28,9 @@ use warnings;
 use Encode qw(decode);
 use Scalar::Util qw(blessed);
 use base 'Email::Folder';
-use Class::C3;
+use mro;
 
-our $VERSION = '0.01';
+our $VERSION = '0.011';
 
 =head2 new($folder, %options)
 

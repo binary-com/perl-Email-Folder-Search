@@ -19,7 +19,6 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Email::Folder" => 0,
     "Encode" => 0,
-    "NEXT" => 0,
     "Scalar::Util" => 0
   },
   "TEST_REQUIRES" => {
@@ -34,7 +33,7 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.94",
     "Try::Tiny" => 0
   },
-  "VERSION" => "0.01",
+  "VERSION" => "0.011",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -49,7 +48,6 @@ my %FallbackPrereqs = (
   "FindBin" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
-  "NEXT" => 0,
   "Path::Tiny" => 0,
   "Scalar::Util" => 0,
   "Test::CheckDeps" => "0.010",

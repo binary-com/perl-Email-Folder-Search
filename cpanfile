@@ -1,6 +1,5 @@
 requires 'Email::Folder';
 requires 'Encode';
-requires 'NEXT';
 requires 'Scalar::Util';
 
 on configure => sub {
