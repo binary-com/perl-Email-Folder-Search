@@ -155,6 +155,10 @@ sub init {
 
 L<Email::Folder>
 
+=head1 LICENSE
+
+Same as perl
+
 =cut
 
 1;
