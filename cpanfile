@@ -1,6 +1,7 @@
 requires 'Email::Folder';
 requires 'Encode';
 requires 'Scalar::Util';
+requires 'mro';
 
 on configure => sub {
     requires 'ExtUtils::MakeMaker', '6.48';
