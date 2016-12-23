@@ -4,7 +4,7 @@ package Email::Folder::Search;
 
 =head1 NAME
 
-Email::Folder::Search
+Email::Folder::Search - wait and search emails from mailbox
 
 =head1 DESCRIPTION
 
@@ -154,6 +154,10 @@ sub init {
 =head1 SEE ALSO
 
 L<Email::Folder>
+
+=head1 LICENSE
+
+Same as perl
 
 =cut
 
