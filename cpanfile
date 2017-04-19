@@ -1,4 +1,4 @@
-requires 'Email::Folder';
+requires 'Email::Folder', "0.860";
 requires 'Encode';
 requires 'Scalar::Util';
 requires 'mro';
