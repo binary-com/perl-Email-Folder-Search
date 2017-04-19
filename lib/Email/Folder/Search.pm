@@ -14,7 +14,7 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 
     use Email::Folder::Search;
     my $folder = Email::Folder::Search->new('/var/spool/mbox');
-    my %msg = $folder->get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
+    my %msg = $folder->search(email => 'hello@test.com', subject => qr/this is a subject/);
     $folder->clear();
 
 =cut
@@ -42,7 +42,7 @@ options:
 
 =item timeout
 
-The seconds that get_email_by_address_subject will wait if the email cannot be found.
+The seconds that search will wait if the email cannot be found.
 
 =back
 
