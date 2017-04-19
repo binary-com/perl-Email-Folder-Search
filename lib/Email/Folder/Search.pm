@@ -81,6 +81,7 @@ sub search {
     WAIT: for (0 .. $self->{timeout}) {
         MSG: while (my $tmsg = $self->next_message) {
             my $address = $tmsg->header('To');
+            my $from    = $tmsg->header('From');
             my $subject = $tmsg->header('Subject');
             if ($subject =~ /=\?UTF\-8/) {
                 $subject = decode('MIME-Header', $subject);
@@ -91,6 +92,7 @@ sub search {
                 $msg{body}    = $tmsg->body;
                 $msg{address} = $address;
                 $msg{subject} = $subject;
+                $msg{from}    = $from;
                 push @msgs, \%msg;
                 $found = 1;
             }
