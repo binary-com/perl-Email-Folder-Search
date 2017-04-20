@@ -28,6 +28,7 @@ use warnings;
 use Encode qw(decode);
 use Scalar::Util qw(blessed);
 use base 'Email::Folder';
+use Email::MIME;
 use mro;
 
 our $VERSION = '0.011';
@@ -80,12 +81,10 @@ sub search {
     #mailbox maybe late, so we wait 3 seconds
     WAIT: for (0 .. $self->{timeout}) {
         MSG: while (my $tmsg = $self->next_message) {
+            $tmsg = Email::MIME->new($tmsg->as_string);
             my $address = $tmsg->header('To');
             my $from    = $tmsg->header('From');
             my $subject = $tmsg->header('Subject');
-            if ($subject =~ /=\?UTF\-8/) {
-                $subject = decode('MIME-Header', $subject);
-            }
 
             if ($address eq $email && $subject =~ $subject_regexp) {
                 my %msg;
@@ -93,6 +92,7 @@ sub search {
                 $msg{address} = $address;
                 $msg{subject} = $subject;
                 $msg{from}    = $from;
+                $msg{MIME}    = $tmsg;
                 push @msgs, \%msg;
                 $found = 1;
             }
