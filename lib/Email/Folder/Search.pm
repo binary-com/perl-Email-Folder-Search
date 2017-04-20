@@ -88,7 +88,7 @@ sub search {
 
             if ($address eq $email && $subject =~ $subject_regexp) {
                 my %msg;
-                $msg{body}    = $tmsg->body;
+                $msg{body}    = $tmsg->body_str;
                 $msg{address} = $address;
                 $msg{subject} = $subject;
                 $msg{from}    = $from;
