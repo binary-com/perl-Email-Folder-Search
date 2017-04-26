@@ -49,10 +49,10 @@ The seconds that search will wait if the email cannot be found.
 
 =cut
 
-sub new {
-    my $class       = shift;
-    my @args = @_;
-    my $self        = $class->next::method(@args);
+sub new {    ## no critic (RequireArgUnpacking)
+    my $class = shift;
+    my @args  = @_;
+    my $self  = $class->next::method(@args);
     $self->{folder_path} = $args[0];
     $self->{timeout} //= 3;
     return $self;
