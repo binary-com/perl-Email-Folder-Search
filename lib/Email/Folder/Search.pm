@@ -31,7 +31,7 @@ use base 'Email::Folder';
 use Email::MIME;
 use mro;
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 =head2 new($folder, %options)
 
@@ -109,7 +109,7 @@ Reset the mailbox
 
 =cut
 
-sub reset { ## no critic (ProhibitBuiltinHomonyms)
+sub reset {    ## no critic (ProhibitBuiltinHomonyms)
     my $self         = shift;
     my $reader_class = blessed($self->{_folder});
     delete $self->{_folder};
