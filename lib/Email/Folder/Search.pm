@@ -14,7 +14,7 @@ Search email from mailbox file. This module is mainly to test that the emails ar
 
     use Email::Folder::Search;
     my $folder = Email::Folder::Search->new('/var/spool/mbox');
-    my %msg = $folder->get_email_by_address_subject(email => 'hello@test.com', subject => qr/this is a subject/);
+    my %msg = $folder->search(email => 'hello@test.com', subject => qr/this is a subject/);
     $folder->clear();
 
 =cut
@@ -28,9 +28,10 @@ use warnings;
 use Encode qw(decode);
 use Scalar::Util qw(blessed);
 use base 'Email::Folder';
+use Email::MIME;
 use mro;
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 =head2 new($folder, %options)
 
@@ -42,16 +43,15 @@ options:
 
 =item timeout
 
-The seconds that get_email_by_address_subject will wait if the email cannot be found.
+The seconds that search will wait if the email cannot be found.
 
 =back
 
 =cut
 
 sub new {
-    my $class       = shift;
-    my @args = @_;
-    my $self        = $class->next::method(@args);
+    my ($class, @args) = @_;
+    my $self = $class->next::method(@args);
     $self->{folder_path} = $args[0];
     $self->{timeout} //= 3;
     return $self;
@@ -66,8 +66,7 @@ get emails with receiver address and subject(regexp). Return an array of message
 =cut
 
 sub search {
-    my $self = shift;
-    my %cond = @_;
+    my ($self, %cond) = @_;
 
     die 'Need email address and subject regexp' unless $cond{email} && $cond{subject} && ref($cond{subject}) eq 'Regexp';
 
@@ -80,17 +79,18 @@ sub search {
     #mailbox maybe late, so we wait 3 seconds
     WAIT: for (0 .. $self->{timeout}) {
         MSG: while (my $tmsg = $self->next_message) {
+            $tmsg = Email::MIME->new($tmsg->as_string);
             my $address = $tmsg->header('To');
+            my $from    = $tmsg->header('From');
             my $subject = $tmsg->header('Subject');
-            if ($subject =~ /=\?UTF\-8/) {
-                $subject = decode('MIME-Header', $subject);
-            }
 
             if ($address eq $email && $subject =~ $subject_regexp) {
                 my %msg;
-                $msg{body}    = $tmsg->body;
+                $msg{body}    = $tmsg->body_str;
                 $msg{address} = $address;
                 $msg{subject} = $subject;
+                $msg{from}    = $from;
+                $msg{MIME}    = $tmsg;
                 push @msgs, \%msg;
                 $found = 1;
             }
@@ -103,11 +103,18 @@ sub search {
     return @msgs;
 }
 
-sub reset {
+=head2 reset
+
+Reset the mailbox
+
+=cut
+
+sub reset {    ## no critic (ProhibitBuiltinHomonyms)
     my $self         = shift;
     my $reader_class = blessed($self->{_folder});
     delete $self->{_folder};
     $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
+    return;
 }
 
 =head2 clear
