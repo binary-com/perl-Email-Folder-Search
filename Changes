@@ -1,5 +1,7 @@
-Revision history for Email-Fetch
+Revision history for Email-Folder-Search
 {{NEXT}}
+
+0.012   2016-04-26
         add header 'From'
         update pod
         update Email::Folder
