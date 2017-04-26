@@ -49,10 +49,9 @@ The seconds that search will wait if the email cannot be found.
 
 =cut
 
-sub new {    ## no critic (RequireArgUnpacking)
-    my $class = shift;
-    my @args  = @_;
-    my $self  = $class->next::method(@args);
+sub new {
+    my ($class, @args) = @_;
+    my $self = $class->next::method(@args);
     $self->{folder_path} = $args[0];
     $self->{timeout} //= 3;
     return $self;
@@ -67,8 +66,7 @@ get emails with receiver address and subject(regexp). Return an array of message
 =cut
 
 sub search {
-    my $self = shift;
-    my %cond = @_;
+    my ($self, %cond) = @_;
 
     die 'Need email address and subject regexp' unless $cond{email} && $cond{subject} && ref($cond{subject}) eq 'Regexp';
 
@@ -105,11 +103,18 @@ sub search {
     return @msgs;
 }
 
-sub reset {
+=head2 reset
+
+Reset the mailbox
+
+=cut
+
+sub reset { ## no critic (ProhibitBuiltinHomonyms)
     my $self         = shift;
     my $reader_class = blessed($self->{_folder});
     delete $self->{_folder};
     $self->{_folder} = $reader_class->new($self->{folder_path}, %$self);
+    return;
 }
 
 =head2 clear
