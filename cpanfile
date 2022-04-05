@@ -15,7 +15,6 @@ on build => sub {
 on test => sub {
     requires 'Test::More';
     requires 'Test::Exception';
-    requires 'Try::Tiny';
     requires 'FindBin';
     requires 'Path::Tiny';
 };
