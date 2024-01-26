@@ -1,8 +1,5 @@
 # NAME
 
-[![Build Status](https://travis-ci.org/binary-com/perl-Email-Folder-Search.svg?branch=master)](https://travis-ci.org/binary-com/perl-Email-Folder-Search) 
-[![codecov](https://codecov.io/gh/binary-com/perl-Email-Folder-Search/branch/master/graph/badge.svg)](https://codecov.io/gh/binary-com/perl-Email-Folder-Search)
-
 Email::Folder::Search
 
 # DESCRIPTION
